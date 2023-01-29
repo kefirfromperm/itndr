@@ -1,7 +1,6 @@
 <configuration>
     <include resource="io/micronaut/gcp/logging/logback-json-appender.xml" />
 
-    
     <root level="INFO">
         <appender-ref ref="CONSOLE_JSON" />
     </root>
