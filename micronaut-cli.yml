@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: itndr
+testFramework: junit
+sourceLanguage: java
+buildTool: gradle_kotlin
+features: [annotation-api, app-name, assertj, gcp-secrets-manager, github-workflow-google-cloud-run, gradle, http-client, java, java-application, jib, junit, logback, micronaut-build, netty-server, properties, reactor, reactor-http-client, readme, serialization-jackson, shade, views-freemarker]
