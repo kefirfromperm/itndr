@@ -13,20 +13,16 @@ repositories {
 
 dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
-    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut:micronaut-http-client")
-//    implementation("io.micronaut.gcp:micronaut-gcp-secret-manager")
     implementation("io.micronaut.gcp:micronaut-gcp-common")
     implementation("io.micronaut.gcp:micronaut-gcp-logging")
     implementation("io.micronaut.reactor:micronaut-reactor")
-    implementation("io.micronaut.reactor:micronaut-reactor-http-client")
-    implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("io.micronaut.views:micronaut-views-freemarker")
     implementation("jakarta.annotation:jakarta.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic")
     testImplementation("org.assertj:assertj-core")
     implementation("io.micronaut:micronaut-validation")
-
+    implementation("com.google.cloud:google-cloud-firestore:3.7.8")
 }
 
 
@@ -63,13 +59,3 @@ micronaut {
         annotations("itndr.*")
     }
 }
-
-
-
-configurations.all {
-    resolutionStrategy.dependencySubstitution {
-        substitute(module("io.micronaut:micronaut-jackson-databind"))
-            .using(module("io.micronaut.serde:micronaut-serde-jackson:1.5.0"))
-    }
-}
-
