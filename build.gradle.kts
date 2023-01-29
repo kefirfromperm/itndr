@@ -35,13 +35,6 @@ java {
 }
 
 tasks {
-    dockerBuild {
-        images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:$project.version"))
-    }
-
-    dockerBuildNative {
-        images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:$project.version"))
-    }
     jib {
         to {
             image = "gcr.io/myapp/jib-image"
