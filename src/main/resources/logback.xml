@@ -1,15 +1,7 @@
 <configuration>
+    <include resource="io/micronaut/gcp/logging/logback-json-appender.xml" />
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <withJansi>true</withJansi>
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
-        <encoder>
-            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <root level="info">
-        <appender-ref ref="STDOUT" />
+    <root level="INFO">
+        <appender-ref ref="CONSOLE_JSON" />
     </root>
 </configuration>

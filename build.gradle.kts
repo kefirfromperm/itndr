@@ -15,7 +15,9 @@ dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut.gcp:micronaut-gcp-secret-manager")
+//    implementation("io.micronaut.gcp:micronaut-gcp-secret-manager")
+    implementation("io.micronaut.gcp:micronaut-gcp-common")
+    implementation("io.micronaut.gcp:micronaut-gcp-logging")
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.reactor:micronaut-reactor-http-client")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
@@ -37,6 +39,7 @@ java {
 }
 
 tasks {
+/*
     dockerBuild {
         images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
     }
@@ -44,6 +47,7 @@ tasks {
     dockerBuildNative {
         images = ["${System.env.DOCKER_IMAGE ?: project.name}:$project.version"]
     }
+*/
     jib {
         to {
             image = "gcr.io/myapp/jib-image"
