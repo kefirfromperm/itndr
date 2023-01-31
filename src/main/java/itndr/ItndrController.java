@@ -9,6 +9,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
@@ -31,8 +32,7 @@ public class ItndrController {
 
     @Get
     public HttpResponse<?> index() {
-        return HttpResponse.redirect(URI.create("/" + UUID.randomUUID()))
-                .header("Cache-Control", "no-cache");
+        return redirect(UUID.randomUUID().toString());
     }
 
     @Get("/{id}")
@@ -40,13 +40,13 @@ public class ItndrController {
         return document(id)
                 .map(snapshot -> {
                     if (!snapshot.exists()) {
-                        return new ModelAndView<>("form", new FillModel(id, false, false));
+                        return showForm(id, false, false);
                     } else {
                         Double storedOffer = snapshot.getDouble("offer");
                         Double storedDemand = snapshot.getDouble("demand");
 
                         if (storedOffer == null || storedDemand == null) {
-                            return new ModelAndView<>("form", new FillModel(id, storedOffer != null, storedDemand != null));
+                            return showForm(id, storedOffer != null, storedDemand != null);
                         }
 
                         if (storedOffer >= storedDemand) {
@@ -76,26 +76,37 @@ public class ItndrController {
                             if (demand != null) {
                                 fields.put("demand", demand);
                             }
-                            return toMono(ref.create(fields))
-                                    .map(ignore -> HttpResponse.redirect(URI.create("/" + id)));
+                            return toMono(ref.create(fields)).map(ignore -> redirect(id));
                         } else {
-                            return Mono.just(HttpResponse.ok(new ModelAndView<>("form", new FillModel(id, false, false))));
+                            return Mono.just(HttpResponse.ok(showForm(id, false, false)));
                         }
                     } else {
                         Double storedOffer = snapshot.getDouble("offer");
                         Double storedDemand = snapshot.getDouble("demand");
 
-                        if (offer != null && storedOffer == null && demand == null) {
-                            return toMono(ref.update("offer", offer))
-                                    .map(ignore -> HttpResponse.redirect(URI.create("/" + id)));
-                        } else if (demand != null && storedDemand == null && offer == null) {
-                            return toMono(ref.update("demand", demand))
-                                    .map(ignore -> HttpResponse.redirect(URI.create("/" + id)));
-                        } else {
-                            return Mono.just(HttpResponse.ok(new ModelAndView<>("form", new FillModel(id, false, false))));
+                        if (storedOffer != null && storedDemand != null) {
+                            return Mono.just(redirect(id));
                         }
+
+                        if (offer != null && storedOffer == null && demand == null) {
+                            return toMono(ref.update("offer", offer)).map(ignore -> redirect(id));
+                        }
+
+                        if (demand != null && storedDemand == null && offer == null) {
+                            return toMono(ref.update("demand", demand)).map(ignore -> redirect(id));
+                        }
+
+                        return Mono.just(HttpResponse.ok(showForm(id, storedOffer != null, storedDemand != null)));
                     }
                 });
+    }
+
+    private static ModelAndView<FillModel> showForm(String id, boolean offerFilled, boolean demandFilled) {
+        return new ModelAndView<>("form", new FillModel(id, offerFilled, demandFilled));
+    }
+
+    private static <T> MutableHttpResponse<T> redirect(String id) {
+        return HttpResponse.temporaryRedirect(URI.create("/" + id));
     }
 
     private Mono<DocumentSnapshot> document(String id) {
