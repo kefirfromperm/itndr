@@ -8,6 +8,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -106,7 +107,8 @@ public class ItndrController {
     }
 
     private static <T> MutableHttpResponse<T> redirect(String id) {
-        return HttpResponse.temporaryRedirect(URI.create("/" + id));
+        return HttpResponse.<T>status(HttpStatus.FOUND)
+                .headers(headers -> headers.location(URI.create("/" + id)));
     }
 
     private Mono<DocumentSnapshot> document(String id) {
