@@ -52,7 +52,7 @@ jobs:
           gcloud run deploy itndr --quiet \
             --image "${DOCKER_IMAGE}" --project "${GCLOUD_PROJECT_ID}" \
             --region "${GCLOUD_REGION}" --platform managed --allow-unauthenticated --format json \
-            --min-instances=0 --max-instances=3 --memory=256Mi --use-http2
+            --min-instances=0 --max-instances=3 --memory=256Mi
           echo "Invoke endpoint:"
           gcloud run services list --platform managed --format json | jq -r \
             '.[] | select(.metadata.name == "google-cloud-run-maven-test") | .status.address.url'
