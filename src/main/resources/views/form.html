@@ -1,15 +1,36 @@
 <!DOCTYPE html>
-<html lang="en" th:replace="~{layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" th:replace="~{layout :: layout(~{::div})}" xmlns:th="http://www.thymeleaf.org">
 <body>
-<section>
+<div>
+  <p>Please enter your expected salary if you are a candidate or salary offer if you are a recruiter and send
+    <a href="" onclick="return copyLink()" class="link-primary" title="Copy Link">the link</a>
+    to the recruiter or candidate accordingly.</p>
   <form th:action="'/' + ${id}" method="post">
-    <label for="demand">Demand</label>
-    <input id="demand" name="demand" type="number" th:disabled="${demandFilled}"/>
-    <label for="offer">Offer</label>
-    <input id="offer" name="offer" type="number" th:disabled="${offerFilled}"/>
-    <input value="Save" type="submit"/>
+    <div class="mb-3">
+      <label for="demand" class="form-label">Please enter the lowest limit of the requested salary if you are a
+        candidate</label>
+      <input id="demand" name="demand" type="number" class="form-control" min="0" step="0.01"
+             th:disabled="${demandFilled}"
+      />
+      <div class="form-text">A recruiter will never see what you enter</div>
+    </div>
+    <div class="mb-3">
+      <label for="offer" class="form-label">Please enter the highest limit of salary for the proposed position if you
+        are a recruiter</label>
+      <input id="offer" name="offer" type="number" class="form-control" min="0" step="0.01"
+             th:disabled="${offerFilled}"
+      />
+      <div class="form-text">A candidate will never see what you enter</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
   </form>
-</section>
+  <script lang="javascript">
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      return false;
+    }
+  </script>
+</div>
 </body>
 </html>
 
