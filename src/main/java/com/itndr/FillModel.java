@@ -1,7 +1,8 @@
-package itndr;
+package com.itndr;
 
 import io.micronaut.core.annotation.Introspected;
 
+@SuppressWarnings("unused")
 @Introspected
 public class FillModel {
     private final String id;

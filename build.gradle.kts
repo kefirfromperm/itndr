@@ -5,7 +5,7 @@ plugins {
 }
 
 version = "0.1"
-group = "itndr"
+group = "com.itndr"
 
 repositories {
     mavenCentral()
@@ -27,7 +27,7 @@ dependencies {
 
 
 application {
-    mainClass.set("itndr.Application")
+    mainClass.set("com.itndr.Application")
 }
 java {
     sourceCompatibility = JavaVersion.toVersion("11")
@@ -54,6 +54,6 @@ micronaut {
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("itndr.*")
+        annotations("com.itndr.*")
     }
 }

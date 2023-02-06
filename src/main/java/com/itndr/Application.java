@@ -1,4 +1,4 @@
-package itndr;
+package com.itndr;
 
 import io.micronaut.runtime.Micronaut;
 
