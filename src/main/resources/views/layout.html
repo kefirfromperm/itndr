@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html th:fragment="layout(content)" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>IT-ndr</title>
+</head>
+<body>
+<h1>IT-ndr</h1>
+<header>
+  <a href="/">Home</a>
+</header>
+<div th:replace="${content}">
+  Layout content
+</div>
+<footer>
+  &copy; VS-Consulting DOO, Bar &mdash; 2023
+</footer>
+</body>

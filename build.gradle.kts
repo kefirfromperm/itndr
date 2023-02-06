@@ -17,7 +17,7 @@ dependencies {
     implementation("io.micronaut.gcp:micronaut-gcp-common")
     implementation("io.micronaut.gcp:micronaut-gcp-logging")
     implementation("io.micronaut.reactor:micronaut-reactor")
-    implementation("io.micronaut.views:micronaut-views-freemarker")
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("jakarta.annotation:jakarta.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic")
     testImplementation("org.assertj:assertj-core")

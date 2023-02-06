@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section>
+  <form th:action="'/' + ${id}" method="post">
+    <label for="demand">Demand</label>
+    <input id="demand" name="demand" type="number" th:disabled="${demandFilled}"/>
+    <label for="offer">Offer</label>
+    <input id="offer" name="offer" type="number" th:disabled="${offerFilled}"/>
+    <input value="Save" type="submit"/>
+  </form>
+</section>
+</body>
+</html>
+
