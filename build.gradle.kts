@@ -1,7 +1,7 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.micronaut.application") version "3.7.0"
-    id("com.google.cloud.tools.jib") version "2.8.0"
+    id("com.github.ben-manes.versions") version "0.45.0"
 }
 
 version = "0.1"
@@ -19,10 +19,9 @@ dependencies {
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("jakarta.annotation:jakarta.annotation-api")
-    runtimeOnly("ch.qos.logback:logback-classic")
-    testImplementation("org.assertj:assertj-core")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.5")
     implementation("io.micronaut:micronaut-validation")
-    implementation("com.google.cloud:google-cloud-firestore:3.7.8")
+    implementation("com.google.cloud:google-cloud-firestore:3.7.9")
 }
 
 
@@ -42,9 +41,12 @@ tasks {
     dockerBuildNative {
         images.set(listOf("${System.getenv("DOCKER_IMAGE") ?: project.name}:${project.version}"))
     }
-    jib {
-        to {
-            image = "gcr.io/myapp/jib-image"
+    named(
+        "dependencyUpdates",
+        com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask::class.java
+    ).configure {
+        rejectVersionIf {
+            candidate.version.contains(Regex("\\-(M\\d+)|(RC(\\-|\\d)*)|(Beta)", RegexOption.IGNORE_CASE))
         }
     }
 }
