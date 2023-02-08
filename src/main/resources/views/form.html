@@ -2,25 +2,37 @@
 <html lang="en" th:replace="~{layout :: layout(~{::div})}" xmlns:th="http://www.thymeleaf.org">
 <body>
 <div>
-  <p>Please enter your expected salary if you are a candidate or salary offer if you are a recruiter and send
-    <a href="" onclick="return copyLink()" class="link-primary" title="Copy Link">the link</a>
-    to the recruiter or candidate accordingly.</p>
+  <p>
+    <strong>ITndr</strong> is a service that offers a simple way to compare a candidate's salary expectation and a
+    recruiter's salary
+    offer in the blind. A candidate and a recruiter fill in their expectation and offer sequentially. Then the service
+    compares the values. If the recruiter's salary offer is more or equal to the candidate's salary expectation, then
+    the candidate and the recruiter are matched else mismatched.
+  </p>
   <form th:action="'/' + ${id}" method="post">
     <div class="mb-3">
-      <label for="demand" class="form-label">Please enter the lowest limit of the requested salary if you are a
-        candidate</label>
+      <label for="demand" class="form-label">
+        <strong>If you are a candidate,</strong> please fill in the field with your salary expectation, click the save
+        button, and send
+        <a href="" onclick="return copyLink()">the link</a> to the recruiter. If you are a recruiter, please ignore the
+        field.
+      </label>
       <input id="demand" name="demand" type="number" class="form-control" min="0" step="0.01"
              th:disabled="${demandFilled}"
       />
-      <div class="form-text">A recruiter will never see what you enter</div>
+      <div class="form-text">A recruiter will never see what you fill in</div>
     </div>
     <div class="mb-3">
-      <label for="offer" class="form-label">Please enter the highest limit of salary for the proposed position if you
-        are a recruiter</label>
+      <label for="offer" class="form-label">
+        <strong>If you are a recruiter,</strong> please fill in the field with the salary upper limit, click the save
+        button, and send
+        <a href="" onclick="return copyLink()">the link</a> to the candidate. If you are a candidate, please ignore the
+        field.
+      </label>
       <input id="offer" name="offer" type="number" class="form-control" min="0" step="0.01"
              th:disabled="${offerFilled}"
       />
-      <div class="form-text">A candidate will never see what you enter</div>
+      <div class="form-text">A candidate will never see what you fill in</div>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
   </form>
