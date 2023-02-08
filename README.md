@@ -4,6 +4,7 @@
 recruiter's salary offer in the blind. A candidate and a recruiter fill in their expectation and offer sequentially.
 Then the service compares the values. If the recruiter's salary offer is more or equal to the candidate's salary
 expectation, then the candidate and the recruiter are matched else mismatched.
+
 ---
 
 ## Micronaut 3.8.3 Documentation
