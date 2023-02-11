@@ -1,15 +1,8 @@
 package com.itndr;
 
-import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutureCallback;
-import com.google.api.core.ApiFutures;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.common.util.concurrent.MoreExecutors;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -19,16 +12,15 @@ import io.micronaut.views.ModelAndView;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Controller()
 public class ItndrController {
-    private final Firestore firestore;
+    private final MatchingRepository matchingRepository;
 
-    public ItndrController(Firestore firestore) {
-        this.firestore = firestore;
+    public ItndrController(MatchingRepository matchingRepository) {
+        this.matchingRepository = matchingRepository;
     }
 
     @Get
@@ -38,97 +30,69 @@ public class ItndrController {
 
     @Get("/{id}")
     public Mono<ModelAndView<ShowModel>> page(@PathVariable String id) {
-        return document(id)
-                .map(snapshot -> {
-                    if (!snapshot.exists()) {
-                        return showForm(id, false, false);
-                    } else {
-                        Double storedOffer = snapshot.getDouble("offer");
-                        Double storedDemand = snapshot.getDouble("demand");
+        return matchingRepository.getById(id)
+                .map(matching -> {
+                    Double storedOffer = matching.getOffer();
+                    Double storedDemand = matching.getDemand();
 
-                        if (storedOffer == null || storedDemand == null) {
-                            return showForm(id, storedOffer != null, storedDemand != null);
-                        }
-
-                        if (storedOffer >= storedDemand) {
-                            return new ModelAndView<>("match", null);
-                        } else {
-                            return new ModelAndView<>("mismatch", null);
-                        }
+                    if (storedOffer == null || storedDemand == null) {
+                        return showForm(id, storedOffer != null, storedDemand != null);
                     }
-                });
+
+                    if (storedOffer >= storedDemand) {
+                        return new ModelAndView<ShowModel>("match", null);
+                    } else {
+                        return new ModelAndView<ShowModel>("mismatch", null);
+                    }
+                })
+                .defaultIfEmpty(showForm(id, false, false));
     }
 
     @Post(value = "/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED)
     public Mono<HttpResponse<ModelAndView<ShowModel>>> save(
             @PathVariable String id,
-            @Body SaveModel model
+            @Body Matching model
     ) {
-        return document(id)
-                .flatMap(snapshot -> {
-                    final var ref = snapshot.getReference();
-                    if (!snapshot.exists()) {
-                        if (model.hasOffer() && !model.hasDemand() || !model.hasOffer() && model.hasDemand()) {
-                            Map<String, Double> fields = new HashMap<>();
-                            if (model.hasOffer()) {
-                                fields.put("offer", model.getOffer());
-                            }
-                            if (model.hasDemand()) {
-                                fields.put("demand", model.getDemand());
-                            }
-                            return toMono(ref.create(fields)).map(ignore -> redirect(id));
-                        } else {
-                            return Mono.just(HttpResponse.ok(showForm(id, false, false)));
-                        }
-                    } else {
-                        Double storedOffer = snapshot.getDouble("offer");
-                        Double storedDemand = snapshot.getDouble("demand");
+        return matchingRepository.getById(id)
+                .map(matching -> {
+                    Double storedOffer = matching.getOffer();
+                    Double storedDemand = matching.getDemand();
 
-                        if (storedOffer != null && storedDemand != null) {
-                            return Mono.just(redirect(id));
-                        }
-
-                        if (model.hasOffer() && storedOffer == null && !model.hasDemand()) {
-                            return toMono(ref.update("offer", model.getOffer())).map(ignore -> redirect(id));
-                        }
-
-                        if (model.hasDemand() && storedDemand == null && !model.hasOffer()) {
-                            return toMono(ref.update("demand", model.getDemand())).map(ignore -> redirect(id));
-                        }
-
-                        return Mono.just(HttpResponse.ok(showForm(id, storedOffer != null, storedDemand != null)));
+                    if (storedOffer != null && storedDemand != null) {
+                        return Mono.just(ItndrController.<ModelAndView<ShowModel>>redirect(id));
                     }
-                });
+
+                    if (model.hasOffer() && storedOffer == null && !model.hasDemand()) {
+                        return matchingRepository.updateOffer(id, model.getOffer())
+                                .map(ignore -> ItndrController.<ModelAndView<ShowModel>>redirect(id));
+                    }
+
+                    if (model.hasDemand() && storedDemand == null && !model.hasOffer()) {
+                        return matchingRepository.updateDemand(id, model.getDemand())
+                                .map(ignore -> ItndrController.<ModelAndView<ShowModel>>redirect(id));
+                    }
+
+                    return Mono.just(HttpResponse.ok(showForm(id, storedOffer != null, storedDemand != null)));
+                })
+                .switchIfEmpty(
+                        Mono.fromCallable(() -> {
+                            if (model.hasOffer() && !model.hasDemand() || !model.hasOffer() && model.hasDemand()) {
+                                return matchingRepository.save(id, model)
+                                        .map(ignore -> ItndrController.<ModelAndView<ShowModel>>redirect(id));
+                            } else {
+                                return Mono.just(HttpResponse.ok(showForm(id, false, false)));
+                            }
+                        })
+                )
+                .flatMap(Function.identity());
     }
 
     private static ModelAndView<ShowModel> showForm(String id, boolean offerFilled, boolean demandFilled) {
         return new ModelAndView<>("form", new ShowModel(id, offerFilled, demandFilled));
     }
 
-    private static <T> MutableHttpResponse<T> redirect(String id) {
+    private static <T> HttpResponse<T> redirect(String id) {
         return HttpResponse.<T>status(HttpStatus.FOUND)
                 .headers(headers -> headers.location(URI.create("/" + id)));
-    }
-
-    private Mono<DocumentSnapshot> document(String id) {
-        return toMono(firestore.collection("matching").document(id).get());
-    }
-
-    public static <T> Mono<T> toMono(ApiFuture<T> apiFuture) {
-        return Mono.create(sink -> ApiFutures.addCallback(
-                apiFuture,
-                new ApiFutureCallback<>() {
-                    @Override
-                    public void onFailure(Throwable t) {
-                        sink.error(t);
-                    }
-
-                    @Override
-                    public void onSuccess(T result) {
-                        sink.success(result);
-                    }
-                },
-                MoreExecutors.directExecutor()
-        ));
     }
 }

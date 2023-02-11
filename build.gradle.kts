@@ -21,7 +21,7 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic:1.4.5")
     implementation("io.micronaut:micronaut-validation")
-    implementation("com.google.cloud:google-cloud-firestore:3.7.9")
+    implementation("com.google.cloud:google-cloud-firestore:3.7.10")
 }
 
 
@@ -46,7 +46,7 @@ tasks {
         com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask::class.java
     ).configure {
         rejectVersionIf {
-            candidate.version.contains(Regex("\\-(M\\d+)|(RC(\\-|\\d)*)|(Beta)", RegexOption.IGNORE_CASE))
+            candidate.version.contains(Regex("-((m\\d+)|(rc(-|\\d)*)|(beta))", RegexOption.IGNORE_CASE))
         }
     }
 }

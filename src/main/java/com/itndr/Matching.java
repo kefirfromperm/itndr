@@ -4,11 +4,16 @@ import io.micronaut.core.annotation.Introspected;
 
 @SuppressWarnings("unused")
 @Introspected
-public class SaveModel {
+public class Matching {
     private Double offer;
     private Double demand;
 
-    public SaveModel() {
+    public Matching() {
+    }
+
+    public Matching(Double offer, Double demand) {
+        this.offer = offer;
+        this.demand = demand;
     }
 
     public Double getOffer() {
