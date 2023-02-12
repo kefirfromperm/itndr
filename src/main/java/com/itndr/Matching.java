@@ -2,6 +2,8 @@ package com.itndr;
 
 import io.micronaut.core.annotation.Introspected;
 
+import java.util.Objects;
+
 @SuppressWarnings("unused")
 @Introspected
 public class Matching {
@@ -38,5 +40,22 @@ public class Matching {
 
     public boolean hasDemand() {
         return demand != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Matching matching = (Matching) o;
+        return Objects.equals(offer, matching.offer) && Objects.equals(demand, matching.demand);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(offer, demand);
     }
 }
