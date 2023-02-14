@@ -22,6 +22,7 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic:1.4.5")
     implementation("io.micronaut:micronaut-validation")
     implementation("com.google.cloud:google-cloud-firestore:3.7.10")
+    testImplementation("org.jsoup:jsoup:1.15.3")
 }
 
 
