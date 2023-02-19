@@ -78,9 +78,15 @@ public class ItndrController {
                         Mono.fromCallable(() -> {
                             if (model.hasOffer() && !model.hasDemand() || !model.hasOffer() && model.hasDemand()) {
                                 return matchingRepository.save(id, model)
-                                        .map(ignore -> ItndrController.<ModelAndView<ShowModel>>redirect(id));
+                                        .map(ignore -> ItndrController.redirect(id));
+                            } else if (model.hasOffer() && model.hasDemand()) {
+                                return Mono.just(HttpResponse.ok(showError(id,
+                                        "Please fill in only one field salary expectation if you are a candidate or the salary upper limit if you are a recruiter."
+                                )));
                             } else {
-                                return Mono.just(HttpResponse.ok(showForm(id, false, false)));
+                                return Mono.just(HttpResponse.ok(showError(id,
+                                        "Please fill in one field salary expectation if you are a candidate or the salary upper limit if you are a recruiter."
+                                )));
                             }
                         })
                 )
@@ -88,7 +94,11 @@ public class ItndrController {
     }
 
     private static ModelAndView<ShowModel> showForm(String id, boolean offerFilled, boolean demandFilled) {
-        return new ModelAndView<>("form", new ShowModel(id, offerFilled, demandFilled));
+        return new ModelAndView<>("form", new ShowModel(id, offerFilled, demandFilled, null));
+    }
+
+    private static ModelAndView<ShowModel> showError(String id, String errorMessage) {
+        return new ModelAndView<>("form", new ShowModel(id, false, false, errorMessage));
     }
 
     private static <T> HttpResponse<T> redirect(String id) {

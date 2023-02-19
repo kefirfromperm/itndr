@@ -34,6 +34,7 @@ public class ItndrControllerTest {
         var doc = Jsoup.parse(response.getBody().orElseThrow());
         assertFalse(doc.select("form").isEmpty());
         assertTrue(doc.select("#match-result").isEmpty());
+        assertTrue(doc.select("#error-message").isEmpty());
     }
 
     @Test
@@ -48,6 +49,7 @@ public class ItndrControllerTest {
         var doc = Jsoup.parse(response.getBody().orElseThrow());
         assertFalse(doc.select("form").isEmpty());
         assertTrue(doc.select("#match-result").isEmpty());
+        assertFalse(doc.select("#error-message").isEmpty());
     }
 
     @Test
@@ -66,6 +68,7 @@ public class ItndrControllerTest {
         var doc = Jsoup.parse(response.getBody().orElseThrow());
         assertFalse(doc.select("form").isEmpty());
         assertTrue(doc.select("#match-result").isEmpty());
+        assertTrue(doc.select("#error-message").isEmpty());
 
         var saveDemandResponse = client.toBlocking().exchange(
                 HttpRequest.POST(uri, "offer=&demand=90000")
@@ -80,6 +83,7 @@ public class ItndrControllerTest {
         final var matchResult = doc1.select("#match-result");
         assertFalse(matchResult.isEmpty());
         assertEquals("MATCH!", matchResult.text().trim());
+        assertTrue(doc1.select("#error-message").isEmpty());
     }
 
     @Test
@@ -98,6 +102,7 @@ public class ItndrControllerTest {
         var doc = Jsoup.parse(response.getBody().orElseThrow());
         assertFalse(doc.select("form").isEmpty());
         assertTrue(doc.select("#match-result").isEmpty());
+        assertTrue(doc.select("#error-message").isEmpty());
 
         var saveDemandResponse = client.toBlocking().exchange(
                 HttpRequest.POST(uri, "offer=90000&demand=")
@@ -112,6 +117,7 @@ public class ItndrControllerTest {
         final var matchResult = doc1.select("#match-result");
         assertFalse(matchResult.isEmpty());
         assertEquals("MISMATCH!", matchResult.text().trim());
+        assertTrue(doc1.select("#error-message").isEmpty());
     }
 
     @Test
@@ -126,5 +132,6 @@ public class ItndrControllerTest {
         var doc = Jsoup.parse(response.getBody().orElseThrow());
         assertFalse(doc.select("form").isEmpty());
         assertTrue(doc.select("#match-result").isEmpty());
+        assertFalse(doc.select("#error-message").isEmpty());
     }
 }

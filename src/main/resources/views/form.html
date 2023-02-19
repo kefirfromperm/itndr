@@ -9,6 +9,9 @@
     compares the values. If the recruiter's salary offer is more or equal to the candidate's salary expectation, then
     the candidate and the recruiter are matched else mismatched.
   </p>
+  <div th:if="${errorMessage!=null}" id="error-message" class="alert alert-warning" role="alert"
+       th:text="${errorMessage}">
+  </div>
   <form th:action="'/' + ${id}" method="post">
     <div class="mb-3">
       <label for="demand" class="form-label">
