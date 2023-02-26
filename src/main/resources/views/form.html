@@ -4,10 +4,9 @@
 <div>
   <p>
     <strong>ITndr</strong> is a service that offers a simple way to compare a candidate's salary expectation and a
-    recruiter's salary
-    offer in the blind. A candidate and a recruiter fill in their expectation and offer sequentially. Then the service
-    compares the values. If the recruiter's salary offer is more or equal to the candidate's salary expectation, then
-    the candidate and the recruiter are matched else mismatched.
+    recruiter's salary offer in the blind. A candidate and a recruiter fill in their expectation and offer sequentially.
+    Then the service compares the values. If the recruiter's salary offer is more or equal to the candidate's salary
+    expectation, then the candidate and the recruiter are matched else mismatched.
   </p>
   <div th:if="${errorMessage!=null}" id="error-message" class="alert alert-warning" role="alert"
        th:text="${errorMessage}">
@@ -16,25 +15,25 @@
     <div class="mb-3">
       <label for="demand" class="form-label">
         <strong>If you are a candidate,</strong> please fill in the field with your salary expectation, click the save
-        button, and send
-        <a href="" onclick="return copyLink()">the link</a> to the recruiter. If you are a recruiter, please ignore the
-        field.
+        button, and send <a href="" onclick="return copyLink()">the link</a> to the recruiter. If you are a recruiter,
+        please ignore the field.
       </label>
-      <input id="demand" name="demand" type="number" class="form-control" min="0" step="0.01"
-             th:disabled="${demandFilled}"
+      <input th:if="${!demandFilled}" id="demand" name="demand" type="number" class="form-control" min="0" step="0.01"
+             placeholder="Expected salary..."
       />
+      <input th:if="${demandFilled}" id="demand" type="text" class="form-control" value="******" disabled/>
       <div class="form-text">A recruiter will never see what you fill in</div>
     </div>
     <div class="mb-3">
       <label for="offer" class="form-label">
         <strong>If you are a recruiter,</strong> please fill in the field with the salary upper limit, click the save
-        button, and send
-        <a href="" onclick="return copyLink()">the link</a> to the candidate. If you are a candidate, please ignore the
-        field.
+        button, and send <a href="" onclick="return copyLink()">the link</a> to the candidate. If you are a candidate,
+        please ignore the field.
       </label>
-      <input id="offer" name="offer" type="number" class="form-control" min="0" step="0.01"
-             th:disabled="${offerFilled}"
+      <input th:if="${!offerFilled}" id="offer" name="offer" type="number" class="form-control" min="0" step="0.01"
+             placeholder="Proposed salary..."
       />
+      <input th:if="${offerFilled}" id="offer" type="text" class="form-control" value="******" disabled/>
       <div class="form-text">A candidate will never see what you fill in</div>
     </div>
     <div class="row mb-3">
