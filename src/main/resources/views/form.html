@@ -40,27 +40,33 @@
     <div class="row mb-3">
       <div class="col">
         <label for="currency" class="form-label">Currency</label>
-        <select id="currency" class="form-select" name="currency">
-          <option>USD</option>
-          <option>EUR</option>
-          <option>GBP</option>
-          <option>CHF</option>
+        <select id="currency" class="form-select" name="currency"
+                th:disabled="${offerFilled || demandFilled}"
+        >
+          <option th:selected="${currency=='USD'}">USD</option>
+          <option th:selected="${currency=='EUR'}">EUR</option>
+          <option th:selected="${currency=='GBP'}">GBP</option>
+          <option th:selected="${currency=='CHF'}">CHF</option>
         </select>
       </div>
       <div class="col">
         <label for="period" class="form-label">Period</label>
-        <select id="period" class="form-select" name="period">
-          <option>Year</option>
-          <option>Month</option>
-          <option>Day</option>
-          <option>Hour</option>
+        <select id="period" class="form-select" name="period"
+                th:disabled="${offerFilled || demandFilled}"
+        >
+          <option th:selected="${period=='Year'}">Year</option>
+          <option th:selected="${period=='Month'}">Month</option>
+          <option th:selected="${period=='Day'}">Day</option>
+          <option th:selected="${period=='Hour'}">Hour</option>
         </select>
       </div>
       <div class="col">
         <label for="payType" class="form-label">Gross/Net</label>
-        <select id="payType" name="payType" class="form-select">
-          <option>Gross</option>
-          <option>Net</option>
+        <select id="payType" name="payType" class="form-select"
+                th:disabled="${offerFilled || demandFilled}"
+        >
+          <option th:selected="${payType=='Gross'}">Gross</option>
+          <option th:selected="${payType=='Net'}">Net</option>
         </select>
       </div>
     </div>

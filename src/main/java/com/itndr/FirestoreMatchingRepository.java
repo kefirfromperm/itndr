@@ -27,7 +27,13 @@ public class FirestoreMatchingRepository implements MatchingRepository {
         return toMono(reference(id).get())
                 .mapNotNull(snapshot -> {
                             if (snapshot.exists()) {
-                                return new Matching(snapshot.getDouble("offer"), snapshot.getDouble("demand"));
+                                final var matching = new Matching();
+                                matching.setOffer(snapshot.getDouble("offer"));
+                                matching.setDemand(snapshot.getDouble("demand"));
+                                matching.setCurrency(snapshot.getString("currency"));
+                                matching.setPeriod(snapshot.getString("period"));
+                                matching.setPayType(snapshot.getString("payType"));
+                                return matching;
                             } else {
                                 return null;
                             }
@@ -41,13 +47,18 @@ public class FirestoreMatchingRepository implements MatchingRepository {
 
     @Override
     public Mono<Boolean> save(String id, Matching matching) {
-        Map<String, Double> fields = new HashMap<>();
+        Map<String, Object> fields = new HashMap<>();
         if (matching.hasOffer()) {
             fields.put("offer", matching.getOffer());
         }
         if (matching.hasDemand()) {
             fields.put("demand", matching.getDemand());
         }
+
+        fields.put("currency", matching.getCurrency());
+        fields.put("period", matching.getPeriod());
+        fields.put("payType", matching.getPayType());
+
         return toMono(reference(id).create(fields))
                 .map(ignore -> true);
     }

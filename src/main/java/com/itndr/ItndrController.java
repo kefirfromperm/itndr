@@ -36,7 +36,7 @@ public class ItndrController {
                     Double storedDemand = matching.getDemand();
 
                     if (storedOffer == null || storedDemand == null) {
-                        return showForm(id, storedOffer != null, storedDemand != null);
+                        return showForm(id, matching);
                     }
 
                     if (storedOffer >= storedDemand) {
@@ -45,7 +45,7 @@ public class ItndrController {
                         return new ModelAndView<ShowModel>("mismatch", null);
                     }
                 })
-                .defaultIfEmpty(showForm(id, false, false));
+                .defaultIfEmpty(showEmptyForm(id));
     }
 
     @Post(value = "/{id}", consumes = MediaType.APPLICATION_FORM_URLENCODED)
@@ -72,7 +72,7 @@ public class ItndrController {
                                 .map(ignore -> ItndrController.<ModelAndView<ShowModel>>redirect(id));
                     }
 
-                    return Mono.just(HttpResponse.ok(showForm(id, storedOffer != null, storedDemand != null)));
+                    return Mono.just(HttpResponse.ok(showForm(id, matching)));
                 })
                 .switchIfEmpty(
                         Mono.fromCallable(() -> {
@@ -80,11 +80,11 @@ public class ItndrController {
                                 return matchingRepository.save(id, model)
                                         .map(ignore -> ItndrController.redirect(id));
                             } else if (model.hasOffer() && model.hasDemand()) {
-                                return Mono.just(HttpResponse.ok(showError(id,
+                                return Mono.just(HttpResponse.ok(showError(id, model,
                                         "Please fill in only one field salary expectation if you are a candidate or the salary upper limit if you are a recruiter."
                                 )));
                             } else {
-                                return Mono.just(HttpResponse.ok(showError(id,
+                                return Mono.just(HttpResponse.ok(showError(id, model,
                                         "Please fill in one field salary expectation if you are a candidate or the salary upper limit if you are a recruiter."
                                 )));
                             }
@@ -93,12 +93,49 @@ public class ItndrController {
                 .flatMap(Function.identity());
     }
 
-    private static ModelAndView<ShowModel> showForm(String id, boolean offerFilled, boolean demandFilled) {
-        return new ModelAndView<>("form", new ShowModel(id, offerFilled, demandFilled, null));
+    private static ModelAndView<ShowModel> showForm(String id, Matching matching) {
+        return new ModelAndView<>(
+                "form",
+                new ShowModel(
+                        id,
+                        matching.getOffer() != null,
+                        matching.getDemand() != null,
+                        matching.getCurrency(),
+                        matching.getPeriod(),
+                        matching.getPayType(),
+                        null
+                )
+        );
     }
 
-    private static ModelAndView<ShowModel> showError(String id, String errorMessage) {
-        return new ModelAndView<>("form", new ShowModel(id, false, false, errorMessage));
+    private static ModelAndView<ShowModel> showEmptyForm(String id) {
+        return new ModelAndView<>(
+                "form",
+                new ShowModel(
+                        id,
+                        false,
+                        false,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+    }
+
+    private static ModelAndView<ShowModel> showError(String id, Matching matching, String errorMessage) {
+        return new ModelAndView<>(
+                "form",
+                new ShowModel(
+                        id,
+                        false,
+                        false,
+                        matching.getCurrency(),
+                        matching.getPeriod(),
+                        matching.getPayType(),
+                        errorMessage
+                )
+        );
     }
 
     private static <T> HttpResponse<T> redirect(String id) {

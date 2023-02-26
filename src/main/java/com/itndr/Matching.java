@@ -10,12 +10,11 @@ public class Matching {
     private Double offer;
     private Double demand;
 
-    public Matching() {
-    }
+    private String currency;
+    private String period;
+    private String payType;
 
-    public Matching(Double offer, Double demand) {
-        this.offer = offer;
-        this.demand = demand;
+    public Matching() {
     }
 
     public Double getOffer() {
@@ -26,6 +25,10 @@ public class Matching {
         this.offer = offer;
     }
 
+    public boolean hasOffer() {
+        return offer != null;
+    }
+
     public Double getDemand() {
         return demand;
     }
@@ -34,12 +37,32 @@ public class Matching {
         this.demand = demand;
     }
 
-    public boolean hasOffer() {
-        return offer != null;
-    }
-
     public boolean hasDemand() {
         return demand != null;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
     }
 
     @Override
@@ -51,11 +74,15 @@ public class Matching {
             return false;
         }
         Matching matching = (Matching) o;
-        return Objects.equals(offer, matching.offer) && Objects.equals(demand, matching.demand);
+        return Objects.equals(offer, matching.offer)
+                && Objects.equals(demand, matching.demand)
+                && Objects.equals(currency, matching.currency)
+                && Objects.equals(period, matching.period)
+                && Objects.equals(payType, matching.payType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(offer, demand);
+        return Objects.hash(offer, demand, currency, period, payType);
     }
 }
