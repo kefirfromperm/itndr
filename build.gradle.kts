@@ -1,7 +1,7 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.micronaut.application") version "3.7.0"
-    id("com.github.ben-manes.versions") version "0.45.0"
+    id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("io.micronaut.application") version "3.7.4"
+    id("com.github.ben-manes.versions") version "0.46.0"
 }
 
 version = "0.1"
@@ -14,15 +14,15 @@ repositories {
 dependencies {
     annotationProcessor("io.micronaut:micronaut-http-validation")
     implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut.gcp:micronaut-gcp-common")
-    implementation("io.micronaut.gcp:micronaut-gcp-logging")
+    implementation("io.micronaut.gcp:micronaut-gcp-common:4.8.1")
+    implementation("io.micronaut.gcp:micronaut-gcp-logging:4.8.1")
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("jakarta.annotation:jakarta.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic:1.4.5")
     implementation("io.micronaut:micronaut-validation")
-    implementation("com.google.cloud:google-cloud-firestore:3.7.10")
-    testImplementation("org.jsoup:jsoup:1.15.3")
+    implementation("com.google.cloud:google-cloud-firestore:3.8.2")
+    testImplementation("org.jsoup:jsoup:1.15.4")
 }
 
 
